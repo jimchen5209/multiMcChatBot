@@ -1,0 +1,21 @@
+{
+  "main.auth.login": "Logging in to {email}",
+  "main.auth.error": "{email} login failed: {message}",
+  "main.auth.still_valid": "Session of {email} is still valid",
+  "bot.player.not_found": "Player {username} not found.",
+  "bot.player.respawn.all": "Respawning all players...",
+  "bot.player.respawn": "Respawning {username}...",
+  "bot.player.no_player": "Please specify a player",
+  "bot.player.command.list": "List of bot commands:",
+  "bot.player.command.not_found": "Command ~{command} not found",
+  "bot.end": "Stop signal received, disconnecting all players",
+  "player.connected": "Connected to {server}:{port}",
+  "player.connection.lost": "Lost connection: {reason}",
+  "player.health.changed": "Health stat changed: health={health} food={food} saturation={saturation}",
+  "player.respawn.hint": "Respawning in 1s...",
+  "player.respawned": "Respawned",
+  "player.connection.retry": "Reconnecting in 5s(Retry: {times})...",
+  "player.disconnected": "Disconnected",
+  "player.auto_respawn.toggle": "Auto respawn: {value}",
+  "player.auto_reconnect.toggle": "Auto reconnect: {value}"
+}
