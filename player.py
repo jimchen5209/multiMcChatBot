@@ -68,7 +68,7 @@ class Player:
 
     def handle_disconnect(self, disconnect_packet):
         self.__logger.warning(
-            self.__lang.lang("player.connection.lost").format(reason=(json.loads(disconnect_packet.json_data))))
+            self.__lang.lang("player.connection.lost").format(reason=self.__lang.parse_json(json.loads(disconnect_packet.json_data))))
         if self.__auto_reconnect:
             self.__retry()
 
