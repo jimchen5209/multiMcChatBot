@@ -14,7 +14,7 @@
   "player.health.changed": "玩家狀態已變更: 血量={health} 飽食度={food} 隱藏飽食度={saturation}",
   "player.respawn.hint": "將於 1 秒後重生...",
   "player.respawned": "已重生",
-  "player.connection.retry": "將於 5 秒後重先連線(已重試 {times} 次)...",
+  "player.connection.retry": "將於 5 秒後重新連線(已重試 {times} 次)...",
   "player.disconnected": "已中斷連線",
   "player.auto_respawn.toggle": "自動重生: {value}",
   "player.auto_reconnect.toggle": "自動重連: {value}"
