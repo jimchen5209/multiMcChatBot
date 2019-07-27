@@ -11,6 +11,7 @@
   "bot.end": "收到停止訊號，正在中斷所有玩家的連線",
   "player.connected": "已連線至 {server}:{port}",
   "player.connection.lost": "失去連線: {reason}",
+  "player.connection.rejected": "與伺服器連線失敗: {reason}",
   "player.health.changed": "玩家狀態已變更: 血量={health} 飽食度={food} 隱藏飽食度={saturation}",
   "player.respawn.hint": "將於 1 秒後重生...",
   "player.respawned": "已重生",

@@ -9,6 +9,7 @@ import threading
 from minecraft.networking.connection import Connection
 from minecraft.networking.packets import clientbound, serverbound
 from minecraft.networking.types import AbsoluteHand
+from minecraft.exceptions import LoginDisconnect
 
 from lang import Lang
 
@@ -84,7 +85,15 @@ class Player:
             timer.start()
 
     def handle_exception(self, e, info):
-        self.__logger.error("{type}: {message}".format(type=type(info[1]), message=str(e)))
+        if type(info[1]) == LoginDisconnect:
+            message = str(e).replace('The server rejected our login attempt with: "','').replace('".','')
+            try:
+                self.__logger.error(self.__lang.lang("player.connection.rejected").format(reason=self.__lang.parse_json(json.loads(message))))
+            except json.decoder.JSONDecodeError:
+                self.__logger.error(self.__lang.lang("player.connection.rejected").format(reason=message))
+            pass
+        else:
+            self.__logger.error("{type}: {message}".format(type=type(info[1]), message=str(e)))
         if self.__auto_reconnect:
             self.__retry()
 
