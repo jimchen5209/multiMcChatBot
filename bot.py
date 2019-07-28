@@ -126,31 +126,27 @@ class ChatBot:
     #             self.__logger.error(
     #                 "Player {0} not found.".format(cmd[1]))
 
+    def handle_text(self, text: str):
+        if text.startswith("~"):
+            raw = text.split(" ", 2)
+            command = raw[0].lower()[1:]
+            args = raw[1:]
+            name = "command_{0}".format(command)
+            try:
+                method = getattr(self, name)
+            except AttributeError:
+                self.__logger.error(self.__lang.lang("bot.player.command.not_found").format(command=command))
+            else:
+                method(args)
+        else:
+            for player in self.__players:
+                player.chat(text)
+
     def start_listening(self):
         while True:
             try:
                 text = input("")
-                if text.startswith("~"):
-                    raw = text.split(" ", 2)
-                    command = raw[0].lower()[1:]
-                    args = raw[1:]
-                    name = "command_{0}".format(command)
-                    try:
-                        method = getattr(self, name)
-                    except AttributeError:
-                        self.__logger.error(self.__lang.lang("bot.player.command.not_found").format(command=command))
-                    else:
-                        method(args)
-                    # select = {
-                    #     "respawn": self.__command_respawn(args),
-                    #     "chat": self.__command_chat(args),
-                    #     "disconnect": self.__command_disconnect(args),
-                    #     "reconnect": self.__command_reconnect(args)
-                    # }
-                    # select.get(command, self.__command_not_found(command))
-                else:
-                    for player in self.__players:
-                        player.chat(text)
+                self.handle_text(text)
             except KeyboardInterrupt:
                 self.__logger.info(self.__lang.lang("bot.end"))
                 exit()
