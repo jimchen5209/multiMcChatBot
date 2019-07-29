@@ -1,5 +1,6 @@
 {
   "main.auth.login": "正在登入至 {email}",
+  "main.auth.disabled": "{email} 已停用",
   "main.auth.error": "{email} 登入失敗： {message}",
   "main.auth.still_valid": "{email} 依然有效",
   "bot.player.not_found": "找不到玩家 {username}",

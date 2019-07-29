@@ -17,7 +17,8 @@ class Config:
                 "//accounts": "A list of accounts",
                 "accounts": [{
                     "email": "",
-                    "password": ""
+                    "password": "",
+                    "disabled": False
                 }],
                 "//server": "servers to connect to",
                 "server": {
@@ -40,7 +41,8 @@ class Config:
                     "//accounts": "A list of accounts",
                     "accounts": [{
                         "email": "",
-                        "password": ""
+                        "password": "",
+                        "disabled": False
                     }],
                     "//server": "servers to connect to",
                     "server": {

@@ -31,6 +31,9 @@ def main():
         pass
     # auth
     for account in config.accounts:
+        if account["disabled"]:
+            logger.logger.info(lang.lang("main.auth.disabled").format(email=account["email"]))
+            continue
         if account["email"] in auth:
             temp_auth = authentication.AuthenticationToken(
                 username=account["email"],

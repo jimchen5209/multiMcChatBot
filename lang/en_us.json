@@ -1,5 +1,6 @@
 {
   "main.auth.login": "Logging in to {email}",
+  "main.auth.disabled": "{email} disabled",
   "main.auth.error": "{email} login failed: {message}",
   "main.auth.still_valid": "Session of {email} is still valid",
   "bot.player.not_found": "Player {username} not found.",
