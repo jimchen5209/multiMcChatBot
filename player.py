@@ -134,6 +134,7 @@ class Player:
             self.__logger.error(str(e))
             self.__retry()
 
+    # noinspection PyUnusedLocal
     def handle_join_game(self, join_game_packet):
         self.__logger.info(self.__lang.lang("player.connected").format(
             server=self.__connection.options.address,

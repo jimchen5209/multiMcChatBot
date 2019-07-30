@@ -97,6 +97,7 @@ class ChatBot:
             else:
                 player.toggle_auto_reconnect()
 
+    # noinspection PyUnusedLocal
     def command_help(self, args: List[str]):
         self.__logger.info(self.__lang.lang("bot.player.command.list"))
         methods = [func for func in dir(self) if callable(getattr(self, func)) and func.startswith("command_")]
