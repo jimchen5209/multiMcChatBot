@@ -13,6 +13,7 @@
   "player.connected": "Connected to {server}:{port}",
   "player.connection.lost": "Lost connection: {reason}",
   "player.connection.rejected": "Failed to connect to the server: {reason}",
+  "player.session.expired": "Session expired, refreshing...",
   "player.health.changed": "Health stat changed: health={health} food={food} saturation={saturation}",
   "player.respawn.hint": "Respawning in 1s...",
   "player.respawned": "Respawned",

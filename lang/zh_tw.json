@@ -17,6 +17,7 @@
   "player.respawn.hint": "將於 1 秒後重生...",
   "player.respawned": "已重生",
   "player.connection.retry": "將於 5 秒後重新連線(已重試 {times} 次)...",
+  "player.session.expired": "會話已過期，正在重新整理會話...",
   "player.disconnected": "已中斷連線",
   "player.auto_respawn.toggle": "自動重生: {value}",
   "player.auto_reconnect.toggle": "自動重連: {value}"

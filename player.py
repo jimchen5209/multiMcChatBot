@@ -45,13 +45,15 @@ class Player:
 
         self.__auto_reconnect = auto_reconnect
         self.__auto_respawn = auto_respawn
-        self.username = self.__auth.profile.name
         self.__connection = Connection(
             address=server_address,
             port=port,
             initial_version=version,
             auth_token=self.__auth
         )
+        if not self.__auth.authenticated:
+            return
+        self.username = self.__auth.profile.name
 
         self.__logger = logging.getLogger(self.username)
 
@@ -118,6 +120,7 @@ class Player:
                 self.__refresh_tokens(access=self.__auth.access_token, client=self.__auth.client_token)
         else:
             self.__logger.info(self.__lang.lang("main.auth.still_valid").format(email=self.__email))
+            self.__refresh_tokens(access=self.__auth.access_token, client=self.__auth.client_token)
 
     def reconnect(self):
         try:
@@ -173,11 +176,17 @@ class Player:
                     reason=self.__lang.parse_json(json.loads(message))))
             except json.decoder.JSONDecodeError:
                 self.__logger.error(self.__lang.lang("player.connection.rejected").format(reason=message))
-            pass
+        elif type(info[1]) == YggdrasilError:
+            self.__logger.error(self.__lang.lang("player.session.expired"))
+            self.auth()
+            timer = threading.Timer(1.0, self.reconnect)
+            timer.start()
+            return
         else:
             self.__logger.error("{type}: {message}".format(type=type(info[1]), message=str(e)))
         if self.__auto_reconnect:
-            self.__retry()
+            if not self.__connection.connected:
+                self.__retry()
 
     def __retry(self):
         self.__retries += 1
