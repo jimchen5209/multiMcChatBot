@@ -108,18 +108,23 @@ class Player:
         try:
             self.__auth.refresh()
         except YggdrasilError:
-            self.__logger.info(self.__lang.lang("main.auth.login").format(email=self.__email))
-            try:
-                self.__auth.authenticate(
-                    username=self.__email,
-                    password=base64.b64decode(self.__password).decode()
-                )
-            except YggdrasilError as e:
-                self.__logger.error(self.__lang.lang("main.auth.error").format(email=self.__email, message=str(e)))
-            else:
-                self.__refresh_tokens(access=self.__auth.access_token, client=self.__auth.client_token)
+            self.__login()
+        except ValueError:
+            self.__login()
         else:
             self.__logger.info(self.__lang.lang("main.auth.still_valid").format(email=self.__email))
+            self.__refresh_tokens(access=self.__auth.access_token, client=self.__auth.client_token)
+
+    def __login(self):
+        self.__logger.info(self.__lang.lang("main.auth.login").format(email=self.__email))
+        try:
+            self.__auth.authenticate(
+                username=self.__email,
+                password=base64.b64decode(self.__password).decode()
+            )
+        except YggdrasilError as e:
+            self.__logger.error(self.__lang.lang("main.auth.error").format(email=self.__email, message=str(e)))
+        else:
             self.__refresh_tokens(access=self.__auth.access_token, client=self.__auth.client_token)
 
     def reconnect(self):
