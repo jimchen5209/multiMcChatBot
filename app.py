@@ -12,8 +12,8 @@ from player import Player
 
 
 def main():
-    config = Config()
     logger = Logger()
+    config = Config()
     lang = Lang(config.lang)
     players = []
 

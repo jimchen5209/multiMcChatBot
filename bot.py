@@ -13,7 +13,7 @@ class ChatBot:
     def __init__(self, players: List[Player], lang: Lang):
         self.__logger = logging.getLogger("Bot")
         self.__lang = lang
-        logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
+        logging.basicConfig(level=logging.INFO)
         self.__players = players
 
     def __find_player(self, username: str) -> Player:

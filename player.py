@@ -32,8 +32,8 @@ class Player:
         self.__password = base64.b64encode(password.encode())
         self.__lang = lang
 
-        self.__logger = logging.getLogger("Minecraft/Auth")
-        logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
+        self.__logger = logging.getLogger("Auth")
+        logging.basicConfig(level=logging.INFO)
 
         tokens = self.__get_tokens()
         self.__auth = authentication.AuthenticationToken(
@@ -53,8 +53,7 @@ class Player:
             auth_token=self.__auth
         )
 
-        self.__logger = logging.getLogger("Minecraft/{username}".format(username=self.username))
-        logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
+        self.__logger = logging.getLogger(self.username)
 
         self.__connection.register_packet_listener(self.handle_join_game, clientbound.play.JoinGamePacket)
         self.__connection.register_packet_listener(self.print_chat, clientbound.play.ChatMessagePacket)

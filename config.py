@@ -9,7 +9,7 @@ import logging
 class Config:
     def __init__(self, testing=False):
         self.__logger = logging.getLogger("Config")
-        logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
+        logging.basicConfig(level=logging.INFO)
         self.__logger.info("Loading Config...")
         if testing:
             self.__logger.info("Testing mode detected, using testing config.")

@@ -17,7 +17,7 @@ class Lang:
         self.__color = Color()
         self.lang_name = lang
         self.__logger = logging.getLogger("Translation")
-        logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
+        logging.basicConfig(level=logging.INFO)
         self.__lang_load_list = ["lang/{lang}.json".format(lang=lang), "lang/minecraft/{lang}.json".format(lang=lang)]
         if not os.path.isdir("lang/custom"):
             os.mkdir("lang/custom")
@@ -50,7 +50,7 @@ class Lang:
     def parse_json(self, json_data, flavor="console", default_style=""):
         if type(json_data) != dict:
             if flavor == "console":
-                return self.__color.format_color(str(json_data))
+                return default_style + self.__color.format_color(str(json_data))
             else:
                 return str(json_data)
         text = ""
@@ -105,7 +105,7 @@ class Lang:
             text = style_prefix + json_data['score']['value'] + style_suffix
         if "extra" in json_data:
             for i in json_data["extra"]:
-                text += self.parse_json(i)
+                text += self.parse_json(i, default_style=style_prefix)
         return text
 
 
