@@ -2,14 +2,16 @@
 
 from __future__ import print_function
 
+import base64
 import json
 import logging
 import threading
 
+from minecraft import authentication
+from minecraft.exceptions import LoginDisconnect, YggdrasilError
 from minecraft.networking.connection import Connection
 from minecraft.networking.packets import clientbound, serverbound
 from minecraft.networking.types import AbsoluteHand
-from minecraft.exceptions import LoginDisconnect
 
 from lang import Lang
 
@@ -17,12 +19,39 @@ from lang import Lang
 class Player:
     __retries = 0
 
-    def __init__(self, username: str, connection: Connection, auto_reconnect: bool, auto_respawn: bool, lang: Lang):
+    def __init__(self,
+                 account: str,
+                 password: str,
+                 server_address: str,
+                 port: int,
+                 version: int,
+                 auto_reconnect: bool,
+                 auto_respawn: bool,
+                 lang: Lang):
+        self.__email = account
+        self.__password = base64.b64encode(password.encode())
+        self.__lang = lang
+
+        self.__logger = logging.getLogger("Minecraft/Auth")
+        logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
+
+        tokens = self.__get_tokens()
+        self.__auth = authentication.AuthenticationToken(
+            username=self.__email,
+            access_token=tokens["access"],
+            client_token=tokens["client"]
+        )
+        self.auth()
+
         self.__auto_reconnect = auto_reconnect
         self.__auto_respawn = auto_respawn
-        self.username = username
-        self.__connection = connection
-        self.__lang = lang
+        self.username = self.__auth.profile.name
+        self.__connection = Connection(
+            address=server_address,
+            port=port,
+            initial_version=version,
+            auth_token=self.__auth
+        )
 
         self.__logger = logging.getLogger("Minecraft/{username}".format(username=self.username))
         logging.basicConfig(format="[%(asctime)s][%(levelname)s][%(name)s] %(message)s", level=logging.INFO)
@@ -36,15 +65,67 @@ class Player:
             self.__connection.connect()
         except Exception as e:
             self.__logger.error(str(e))
+            self.__retry()
 
     # def connect(self, ip, port):
     #     self.__init(self.username Connection)
+
+    def __get_tokens(self) -> dict:
+        try:
+            with open('./data.json', 'r') as fs:
+                auth = json.load(fs)
+        except FileNotFoundError:
+            return {
+                "access": None,
+                "client": None
+            }
+        else:
+            if self.__email in auth:
+                return auth[self.__email]
+            else:
+                return {
+                    "access": None,
+                    "client": None
+                }
+
+    def __refresh_tokens(self, access: str, client: str):
+        auth = {}
+        try:
+            with open('./data.json', 'r') as fs:
+                auth = json.load(fs)
+        except FileNotFoundError:
+            pass
+        finally:
+            auth[self.__email] = {
+                "access": access,
+                "client": client
+            }
+            with open('./data.json', 'w') as fs:
+                json.dump(auth, fs, indent=2)
+
+    def auth(self):
+        try:
+            self.__auth.refresh()
+        except YggdrasilError:
+            self.__logger.info(self.__lang.lang("main.auth.login").format(email=self.__email))
+            try:
+                self.__auth.authenticate(
+                    username=self.__email,
+                    password=base64.b64decode(self.__password).decode()
+                )
+            except YggdrasilError as e:
+                self.__logger.error(self.__lang.lang("main.auth.error").format(email=self.__email, message=str(e)))
+            else:
+                self.__refresh_tokens(access=self.__auth.access_token, client=self.__auth.client_token)
+        else:
+            self.__logger.info(self.__lang.lang("main.auth.still_valid").format(email=self.__email))
 
     def reconnect(self):
         try:
             self.__connection.connect()
         except Exception as e:
             self.__logger.error(str(e))
+            self.__retry()
 
     def handle_join_game(self, join_game_packet):
         self.__logger.info(self.__lang.lang("player.connected").format(
@@ -69,7 +150,8 @@ class Player:
 
     def handle_disconnect(self, disconnect_packet):
         self.__logger.warning(
-            self.__lang.lang("player.connection.lost").format(reason=self.__lang.parse_json(json.loads(disconnect_packet.json_data))))
+            self.__lang.lang("player.connection.lost").format(
+                reason=self.__lang.parse_json(json.loads(disconnect_packet.json_data))))
         if self.__auto_reconnect:
             self.__retry()
 
@@ -86,9 +168,10 @@ class Player:
 
     def handle_exception(self, e, info):
         if type(info[1]) == LoginDisconnect:
-            message = str(e).replace('The server rejected our login attempt with: "','').replace('".','')
+            message = str(e).replace('The server rejected our login attempt with: "', '').replace('".', '')
             try:
-                self.__logger.error(self.__lang.lang("player.connection.rejected").format(reason=self.__lang.parse_json(json.loads(message))))
+                self.__logger.error(self.__lang.lang("player.connection.rejected").format(
+                    reason=self.__lang.parse_json(json.loads(message))))
             except json.decoder.JSONDecodeError:
                 self.__logger.error(self.__lang.lang("player.connection.rejected").format(reason=message))
             pass
