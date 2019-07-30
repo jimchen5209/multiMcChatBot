@@ -1,0 +1,5 @@
+cryptography>=1.5
+requests
+future
+colorama
+git+https://github.com/jimchen5209/pyCraft.git@1.14.4
