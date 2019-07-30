@@ -29,6 +29,11 @@ class Lang:
                     self.__lang.update(json.load(fs))
             except FileNotFoundError:
                 self.__logger.warning("{lang} not found, some string may not work.".format(lang=lang_file))
+            except json.decoder.JSONDecodeError as e:
+                self.__logger.error(
+                    "Error when loading {lang} and skipped, some string may not work.".format(lang=lang_file))
+                self.__logger.error(str(e))
+                continue
 
     def __find_lang(self, folder: str):
         for walk in os.walk(folder):
