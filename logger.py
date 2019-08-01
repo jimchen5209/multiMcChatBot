@@ -8,13 +8,14 @@ import time
 from copy import copy
 from logging import Formatter
 
-from colorama import Fore, Style, Back
+from colorama import init, Fore, Style, Back
 
 
 class Logger:
     __logPath = "./logs/{0}".format(time.strftime("%Y-%m-%d-%H-%M-%S"))
 
     def __init__(self):
+        init(autoreset=True)
         if not os.path.isdir("./logs"):
             os.mkdir("./logs")
         self.__log_format = "[%(asctime)s][%(threadName)s/%(name)s]%(levelname)s %(message)s"
